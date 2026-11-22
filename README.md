@@ -84,4 +84,4 @@ Notes:
 
 ## Use of AI Tools
 
-The team used Claude and ChatGPT for bug fixing, light research, chart design suggestions, code review and creating this README. All AI suggestions were checked by the team before they were used, and all numbers in the notebooks are calculated from the CSO data. The full record of how AI was used and what we decided is in [docs/AI_Decision_Log.md](docs/AI_Decision_Log.md).
+The team used Claude and ChatGPT for bug fixing, light research, chart design suggestions, code review and creating this README. All AI suggestions were checked by the team before they were used, and all numbers in the notebooks are calculated from the CSO data. The full record of how AI was used and what we decided is in the AI Decision Log, a Word document in the [`docs/`](docs/) folder.
