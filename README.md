@@ -51,7 +51,7 @@ Both datasets are monthly and have no missing values. The grocery item data runs
 
 ## Key Findings
 
-**Main message:** In Ireland, food prices tend to rise in the months after big fuel price jumps, but they move far less than fuel and have not come back down when fuel got cheaper. The link is strongest about 9–12 months later, and it mainly comes from the 2021–23 price surge.
+**Main message:** In Ireland, food price inflation tended to follow fuel price inflation by about 9–12 months, mainly during the 2021–23 price surge, and food prices stayed high after fuel prices fell.
 
 1. **The big picture:** Fuel prices spiked twice: petrol peaked at 125.5 in June 2022 and diesel reached its highest level, 126.2, in April 2026 (December 2023 = 100). Food prices rose more slowly, by at most 13.1% in a year (compared with up to 50.8% for diesel), and by September 2026 they were 28.5% above their lowest point in January 2021, close to their highest level.
 2. **Fuel swings, food doesn't:** In normal months, petrol and diesel moved about 1.5–1.7% a month, food about 0.3%. During the Ukraine invasion, petrol moved 7.6% a month (5.0 times normal) and diesel 6.8% (4.0 times normal), while food moved 1.1% a month.
