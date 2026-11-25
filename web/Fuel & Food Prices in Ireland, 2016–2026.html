@@ -192,6 +192,11 @@ details.why .body b{color:var(--ink)}
 .refs li{margin-bottom:6px}
 @media (max-width:980px){.mgrid{grid-template-columns:1fr}}
 footer{padding:40px 0 60px}
+.sources{padding:22px 4px 0}
+.sources ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--ink2);line-height:1.5}
+.sources li{margin-bottom:6px}
+.sources a{color:var(--ink2);word-break:break-all}
+.sources a:hover{color:var(--orange)}
 footer .card{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:center}
 
 /* chart text */
@@ -267,7 +272,7 @@ a.kpi:hover{transform:translateY(-3px)}
         <div>
           <p class="eyebrow"><span class="dot"></span>Ireland · 2016–2026</p>
           <h1>Fuel &amp; Food<span class="thin">Prices in Ireland</span></h1>
-          <p class="lede">When petrol and diesel get more expensive, do groceries follow? And how long does it take?</p>
+          <p class="lede">When petrol and diesel get more expensive. Do groceries follow? How long does it take? Will it be affected by global events?</p>
         </div>
         <div>
           <div class="tags">
@@ -400,7 +405,7 @@ a.kpi:hover{transform:translateY(-3px)}
     <div class="finding-head">
       <div>
         <p class="eyebrow"><span class="dot"></span>04 · How reliable is the delay?</p>
-        <h2>The 9–12 month link is real, but it comes mostly from 2021–23</h2>
+        <h2>The 9–12 month link is strong, but it comes mostly from 2021–23</h2>
         <p class="lede">Food lines up best with diesel from 10 months earlier. Take out the 2021–23 surge and the link disappears, so it is not a rule that always holds.</p>
       </div>
       <div class="keystat"><div class="num">0.61</div><div class="small">strongest link, at 10 months</div></div>
@@ -426,7 +431,7 @@ a.kpi:hover{transform:translateY(-3px)}
       <div>
         <p class="eyebrow"><span class="dot"></span>05 · Which groceries</p>
         <h2>Fresh food rose more than twice as much as long-lasting food</h2>
-        <p class="lede">Perishable items rose 34.6% since 2016; shelf-stable items 14.6%. Both started climbing in 2022, after the fuel spike.</p>
+        <p class="lede">Perishable items rose 34.6% since 2016; shelf-stable items 14.6%. Both started climbing in 2022, at the same time as the fuel spike.</p>
       </div>
       <div class="keystat"><div class="num">2.4×</div><div class="small">+34.6% vs +14.6%</div></div>
     </div>
@@ -480,6 +485,14 @@ a.kpi:hover{transform:translateY(-3px)}
       <div><div class="small">Team</div><div style="font-size:20px;font-weight:400">Ahlam Khalil · Chenrui Xie · Sara Larkem</div><div class="small" style="margin-top:4px">Data Visualisation 4 · Lecturer: Yuhang Ye</div></div>
       <div class="small">Data: Central Statistics Office Ireland (CPM24, CPM12)</div>
       <a class="btn" style="background:var(--orange)" href="https://github.com/SaraLarkem/ireland-fuel-grocery-viz">Full analysis on GitHub →</a>
+    </div>
+    <div class="sources" id="sources">
+      <div class="small">Sources</div>
+      <ul>
+        <li>RTÉ (2026a) <i>Dáil votes to cut excise on petrol, diesel from midnight.</i> 24 March. Available at: <a href="https://www.rte.ie/news/business/2026/0324/1564875-ireland-fuel-politics/">https://www.rte.ie/news/business/2026/0324/1564875-ireland-fuel-politics/</a> (Accessed: 21 November 2026).</li>
+        <li>RTÉ (2026b) <i>What do the latest fuel excise cuts mean for pump prices?</i> 15 April. Available at: <a href="https://www.rte.ie/news/2026/0415/1568267-fuel-excise-cuts/">https://www.rte.ie/news/2026/0415/1568267-fuel-excise-cuts/</a> (Accessed: 21 November 2026).</li>
+        <li>CPM24 – Consumer Price Index. data.gov.ie. Available at: <a href="https://data.gov.ie/en_GB/dataset/cpm24-consumer-price-index">https://data.gov.ie/en_GB/dataset/cpm24-consumer-price-index</a></li>
+      </ul>
     </div>
   </div>
 </footer>
