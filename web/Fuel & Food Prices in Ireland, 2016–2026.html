@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fuel &amp; Food Prices in Ireland, 2016–2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root{
+  --bg:#E9E9E9; --card:#F6F6F6; --card2:#FFFFFF; --ink:#2E2E2E; --ink2:#5E5E5E; --muted:#8A8A8A; --line:#D9D9D9;
+  --orange:#FE5E0E; --yellow:#FAF5B2; --blue:#53A2F7; --amber:#FFB83D; --green:#1E9E63; --green-l:#7CC79A; --dark:#2E2E2E;
+  --r:22px; --fs-h1:clamp(44px,7.2vw,104px); --fs-h2:clamp(28px,3.6vw,48px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Outfit,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;font-weight:300;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+b,strong{font-weight:500}
+a{color:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+@media (max-width:640px){.wrap{padding:0 16px}body{font-size:16px}}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:rgba(233,233,233,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.05)}
+.top .wrap{display:flex;align-items:center;gap:18px;height:64px}
+.logo{width:40px;height:40px;border-radius:10px;background:var(--yellow);display:grid;place-items:center;flex:none}
+.brand{font-weight:500;font-size:15px;white-space:nowrap}
+.brand span{color:var(--muted);font-weight:300}
+.nav{display:flex;gap:4px;margin-left:auto;background:var(--card);border-radius:12px;padding:4px}
+.nav a{text-decoration:none;font-size:14px;padding:7px 12px;border-radius:9px;color:var(--ink2)}
+.nav a:hover,.nav a.on{background:var(--bg);color:var(--ink)}
+.btn{text-decoration:none;font:inherit;font-size:14px;font-weight:400;border:0;border-radius:10px;padding:9px 14px;cursor:pointer;background:var(--dark);color:#fff;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn.ghost{background:var(--card);color:var(--ink)}
+@media (max-width:900px){.nav{display:none}.top .btn{margin-left:auto}}
+
+/* sections */
+section{padding:72px 0 24px;scroll-margin-top:64px}
+.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--orange)}
+h1,h2,h3{font-weight:400;letter-spacing:-.03em;margin:0}
+h2{font-size:var(--fs-h2);line-height:1.06;max-width:22ch}
+h3{font-size:20px;letter-spacing:-.01em;font-weight:500}
+.lede{color:var(--ink2);max-width:62ch;margin:18px 0 0;font-size:18px}
+.card{background:var(--card);border-radius:var(--r);padding:24px}
+.card.white{background:var(--card2)}
+.grid{display:grid;gap:14px}
+.small{font-size:13px;color:var(--muted)}
+.num{font-weight:200;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+
+/* hero */
+.hero{padding-top:36px}
+.hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:14px}
+.hero-title{padding:34px 30px 30px;display:flex;flex-direction:column;justify-content:space-between;min-height:420px}
+.hero h1{font-size:var(--fs-h1);line-height:.95}
+.hero h1 .thin{font-weight:200;display:block}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.tag{font-size:13px;background:var(--bg);border-radius:8px;padding:5px 10px;color:var(--ink2);display:inline-flex;align-items:center;gap:6px}
+.tag i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.orange{background:var(--orange);color:#fff;border-radius:var(--r);padding:28px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:420px}
+.orange .k{font-size:13px;opacity:.85;letter-spacing:.06em;text-transform:uppercase}
+.orange .msg{font-size:clamp(22px,2.3vw,30px);line-height:1.2;font-weight:300;letter-spacing:-.015em;margin:14px 0 0;position:relative;z-index:1}
+.orange .row{display:flex;gap:28px;border-top:1px solid rgba(255,255,255,.35);padding-top:18px;margin-top:24px;position:relative;z-index:1;flex-wrap:wrap}
+.orange .row .num{font-size:52px}
+.orange .row .small{color:rgba(255,255,255,.85)}
+.orange svg.deco{position:absolute;right:-30px;top:-10px;opacity:.18}
+.kpis{grid-template-columns:repeat(4,1fr);margin-top:14px}
+.kpi{padding:20px 22px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between}
+.kpi .lab{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.kpi .num{font-size:46px;margin-top:18px}
+.kpi .sub{font-size:13px;color:var(--ink2);margin-top:6px}
+.pill{font-size:12px;border-radius:6px;padding:2px 7px;white-space:nowrap}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.hero-title,.orange{min-height:0}.hero-title{gap:30px}}
+@media (max-width:520px){.kpis{grid-template-columns:1fr 1fr}.kpi .num{font-size:36px}.kpi{padding:16px}}
+
+/* questions */
+.qgrid{grid-template-columns:repeat(4,1fr);margin-top:30px}
+.q{padding:22px;text-decoration:none;display:flex;flex-direction:column;gap:30px;transition:transform .15s}
+.q:hover{transform:translateY(-3px)}
+.q .n{font-size:13px;color:var(--muted);display:flex;justify-content:space-between}
+.q p{margin:0;font-size:19px;line-height:1.3;font-weight:300;letter-spacing:-.01em}
+.gloss{grid-template-columns:repeat(3,1fr);margin-top:14px}
+.gloss .card{padding:20px 22px}
+.gloss h3{font-size:16px;margin-bottom:6px}
+.gloss p{margin:0;font-size:15px;color:var(--ink2)}
+@media (max-width:980px){.qgrid{grid-template-columns:1fr 1fr}.gloss{grid-template-columns:1fr}}
+@media (max-width:520px){.qgrid{grid-template-columns:1fr}}
+
+/* data */
+.dgrid{grid-template-columns:1fr 1fr 1fr;margin-top:30px}
+.dark{background:var(--dark);color:#fff}
+.dark .small{color:#aaa}
+.src .code{font-size:13px;color:var(--muted)}
+.src h3{font-size:26px;font-weight:400;letter-spacing:-.02em;margin:6px 0 10px}
+.src dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:18px 0 0;font-size:14px}
+.src dt{color:var(--muted)}
+.src dd{margin:0}
+.quality{display:flex;flex-direction:column;justify-content:space-between}
+.quality .num{font-size:64px}
+.pipe{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin-top:14px;padding-bottom:6px}
+.pipe .step{min-width:200px;flex:1;scroll-snap-align:start;padding:18px 18px 20px;position:relative}
+.pipe .step .id{font-size:28px;font-weight:200}
+.pipe .step h3{font-size:15px;margin:8px 0 4px}
+.pipe .step p{margin:0;font-size:13px;color:var(--ink2);line-height:1.45}
+.callouts{grid-template-columns:1fr 1fr;margin-top:14px}
+.callout{border-left:4px solid var(--amber)}
+.callout h3{font-size:17px;margin-bottom:6px}
+.callout p{margin:0;font-size:15px;color:var(--ink2)}
+@media (max-width:980px){.dgrid,.callouts{grid-template-columns:1fr}}
+
+/* findings */
+.finding-head{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end}
+.fnum{font-size:clamp(60px,8vw,120px);font-weight:200;letter-spacing:-.05em;line-height:.8;color:#cfcfcf}
+.chart-card{margin-top:28px;padding:22px 22px 18px;background:var(--card2)}
+.chart-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.legend i.dash{background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 7px)!important;height:2px}
+.seg{display:inline-flex;background:var(--bg);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{font:inherit;font-size:13px;border:0;background:transparent;padding:6px 11px;border-radius:8px;cursor:pointer;color:var(--ink2)}
+.seg button.on{background:var(--dark);color:#fff}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none}
+.toggle input{accent-color:var(--orange)}
+.chart{position:relative;width:100%}
+.chart svg{display:block;overflow:visible}
+.src-line{font-size:12px;color:var(--muted);margin-top:8px}
+.tip{position:absolute;pointer-events:none;background:var(--dark);color:#fff;border-radius:10px;padding:9px 12px;font-size:13px;line-height:1.45;opacity:0;transition:opacity .12s;white-space:nowrap;z-index:5;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.tip b{font-weight:500}
+.tip .sw{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.tip .ev{color:var(--yellow);font-size:12px}
+.below{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-top:14px;align-items:start}
+.notice{background:var(--yellow);border-radius:var(--r);padding:20px 22px}
+.notice h3{font-size:14px;text-transform:uppercase;letter-spacing:.07em;font-weight:500;margin-bottom:8px}
+.notice p{margin:0;font-size:16px}
+details.why{background:var(--card);border-radius:var(--r);padding:0}
+details.why summary{list-style:none;cursor:pointer;padding:20px 22px;display:flex;justify-content:space-between;align-items:center;font-weight:500;font-size:15px}
+details.why summary::-webkit-details-marker{display:none}
+details.why summary .plus{width:26px;height:26px;border-radius:8px;background:var(--bg);display:grid;place-items:center;transition:transform .2s}
+details.why[open] summary .plus{transform:rotate(45deg)}
+details.why .body{padding:0 22px 20px;font-size:15px;color:var(--ink2)}
+details.why .body p{margin:0 0 10px}
+details.why .body b{color:var(--ink)}
+@media (max-width:980px){.below{grid-template-columns:1fr}}
+@media (max-width:640px){.fnum{display:none}.finding-head{grid-template-columns:1fr}}
+.slider-row{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:var(--bg);border-radius:14px;padding:12px 16px;margin:6px 0 10px}
+.slider-row input[type=range]{flex:1;min-width:180px;accent-color:var(--orange)}
+.slider-row .val{font-size:30px;font-weight:300;min-width:110px;letter-spacing:-.02em}
+.readout{font-size:14px;color:var(--ink2);min-height:22px}
+.readout b{color:var(--ink)}
+.readout .ok{background:var(--orange);color:#fff;border-radius:6px;padding:1px 7px;margin-left:6px;font-size:12px}
+.mini{grid-template-columns:repeat(4,1fr);margin-top:14px}
+.mini .card{padding:18px 20px}
+.mini .num{font-size:40px;margin:10px 0 4px}
+.mini .card.hl{background:var(--dark);color:#fff}
+.mini .card.hl .small{color:#bbb}
+@media (max-width:980px){.mini{grid-template-columns:1fr 1fr}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:980px){.two{grid-template-columns:1fr}}
+
+/* meaning */
+.sgrid{grid-template-columns:repeat(4,1fr);margin-top:30px}
+.sgrid .card{display:flex;flex-direction:column;gap:20px;min-height:230px}
+.sgrid .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center}
+.sgrid p{margin:0;font-size:15px;color:var(--ink2)}
+.watch{margin-top:14px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
+.watch .num{font-size:64px}
+@media (max-width:980px){.sgrid{grid-template-columns:1fr 1fr}.watch{grid-template-columns:1fr}}
+@media (max-width:520px){.sgrid{grid-template-columns:1fr}}
+
+/* limits */
+.lims{margin-top:30px;display:grid;gap:10px}
+.lims details{background:var(--card);border-radius:18px}
+.lims summary{list-style:none;cursor:pointer;padding:18px 22px;display:grid;grid-template-columns:44px 1fr 26px;align-items:center;gap:12px;font-size:18px;font-weight:400}
+.lims summary::-webkit-details-marker{display:none}
+.lims summary .i{font-size:13px;color:var(--muted)}
+.lims summary .plus{width:26px;height:26px;border-radius:8px;background:var(--bg);display:grid;place-items:center;transition:transform .2s;font-size:16px}
+.lims details[open] .plus{transform:rotate(45deg)}
+.lims .body{padding:0 22px 20px 78px;color:var(--ink2);font-size:15px}
+@media (max-width:640px){.lims .body{padding-left:22px}}
+
+/* method */
+.ntable{width:100%;border-collapse:collapse;font-size:14px}
+.ntable th{text-align:left;font-weight:400;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--line)}
+.ntable td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.ntable td:first-child{font-weight:500;white-space:nowrap}
+.ntable code{font-size:12px;background:var(--bg);padding:2px 6px;border-radius:5px}
+.tablewrap{overflow-x:auto}
+.mgrid{grid-template-columns:1.6fr 1fr;margin-top:30px}
+.refs{font-size:13px;color:var(--ink2);padding-left:18px;margin:10px 0 0}
+.refs li{margin-bottom:6px}
+@media (max-width:980px){.mgrid{grid-template-columns:1fr}}
+footer{padding:40px 0 60px}
+footer .card{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:center}
+
+/* chart text */
+.ax text{fill:#8A8A8A;font-size:12px;font-family:Outfit,sans-serif}
+.ax line{stroke:#E6E6E6}
+.ax .domain{display:none}
+.lab{font-family:Outfit,sans-serif;font-size:13px;font-weight:500}
+.band-lab{font-family:Outfit,sans-serif;font-size:11px;fill:#8a8466;font-weight:400}
+.note{font-family:Outfit,sans-serif;font-size:12px;fill:#6a6a6a}
+
+/* presentation mode */
+.pbar{position:fixed;right:18px;bottom:18px;z-index:30;display:none;gap:6px;align-items:center;background:var(--dark);color:#fff;border-radius:12px;padding:6px 6px 6px 14px;font-size:13px}
+.pbar button{font:inherit;border:0;background:#444;color:#fff;border-radius:8px;width:34px;height:30px;cursor:pointer}
+body.present .pbar{display:flex}
+body.present{--fs-h2:clamp(34px,4.4vw,62px)}
+body.present section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:84px 0 40px}
+body.present .lede{font-size:21px}
+body.present .chart-card{font-size:18px}
+
+/* v2 */
+a.kpi{text-decoration:none;transition:transform .15s}
+a.kpi:hover{transform:translateY(-3px)}
+.keystat{background:var(--card2);border-radius:var(--r);padding:20px 26px;min-width:230px;text-align:left}
+.keystat .num{font-size:clamp(48px,5.5vw,76px);color:var(--orange);font-weight:300}
+.keystat .small{margin-top:8px}
+.finding-head .lede{margin-top:14px}
+.srcgrid{grid-template-columns:1fr 1fr;margin-top:30px}
+.srcbig{padding:28px;display:flex;flex-direction:column;gap:6px}
+.srctop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.srcbig h3{font-size:clamp(26px,2.6vw,34px);font-weight:400;letter-spacing:-.02em}
+.srcbig p{margin:0;color:var(--ink2)}
+.srcstat{display:flex;align-items:flex-end;gap:14px;margin:26px 0 8px;line-height:1.3}
+.srcstat .num{font-size:clamp(64px,7vw,96px)}
+.srclink{font-size:14px;color:var(--ink2);margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.gloss-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.gloss-strip div{background:var(--card);border-radius:16px;padding:14px 18px;font-size:14px;color:var(--ink2)}
+.gloss-strip b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+.contrast{grid-template-columns:1fr 1fr;margin-top:14px}
+.contrast .card{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.contrast .num{font-size:56px;font-weight:200;order:2}
+.contrast .card.hl{background:var(--dark);color:#fff}
+.contrast .card.hl .small{color:#bbb}
+.keep{margin-top:14px;background:var(--yellow);border-radius:var(--r);padding:22px 26px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start}
+.keep-h{font-size:14px;text-transform:uppercase;letter-spacing:.07em;font-weight:500;padding-top:2px}
+.keep ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;font-size:15px}
+.keep b{display:block}
+@media (max-width:980px){.srcgrid,.gloss-strip,.contrast{grid-template-columns:1fr}.keep,.keep ul{grid-template-columns:1fr}.finding-head{grid-template-columns:1fr}.keystat{min-width:0}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="logo" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E2E2E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"/><path d="M3 20h12"/><path d="M6.5 8h5"/><path d="M14 10h2.5a1.5 1.5 0 0 1 1.5 1.5V16a1.5 1.5 0 0 0 3 0V8l-3-3"/></svg>
+    </div>
+    <div class="brand">Fuel × Food <span>· Ireland 2016–2026</span></div>
+    <nav class="nav" id="nav">
+      <a href="#overview">Overview</a><a href="#data">Data</a><a href="#f1">Findings</a><a href="#meaning">What it means</a>
+    </nav>
+    <button class="btn" id="presentBtn" type="button">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>Present
+    </button>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero slide" id="overview">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="card hero-title">
+        <div>
+          <p class="eyebrow"><span class="dot"></span>Ireland · 2016–2026</p>
+          <h1>Fuel &amp; Food<span class="thin">Prices in Ireland</span></h1>
+          <p class="lede">When petrol and diesel get more expensive, do groceries follow? And how long does it take?</p>
+        </div>
+        <div>
+          <div class="tags">
+            <span class="tag"><i style="background:var(--blue)"></i>Petrol</span>
+            <span class="tag"><i style="background:var(--orange)"></i>Diesel</span>
+            <span class="tag"><i style="background:var(--green)"></i>Food</span>
+          </div>
+          <div class="chart" id="c-spark" style="margin-top:14px"></div>
+        </div>
+      </div>
+      <div class="orange">
+        <svg class="deco" width="320" height="320" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width=".6"><circle cx="50" cy="50" r="48"/><circle cx="50" cy="50" r="36"/><circle cx="50" cy="50" r="24"/><circle cx="50" cy="50" r="12"/><path d="M2 50h96M50 2v96"/></svg>
+        <div>
+          <div class="k">The short answer</div>
+          <p class="msg">Food price rises tended to follow fuel price rises by about <b>9–12 months</b>, mainly during the 2021–23 price surge. And when fuel prices fell again, <b>food prices stayed high</b>.</p>
+        </div>
+        <div class="row">
+          <div><div class="num">10 mo</div><div class="small">from the diesel peak to the food peak</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid kpis">
+      <a class="card kpi" href="#f1"><div class="lab">Food today <span class="pill" style="background:#D9F1E3;color:#14724A">Sep 2026</span></div><div><div class="num">+28.5%</div><div class="sub">above its January 2021 low, and not coming down</div></div></a>
+      <a class="card kpi" href="#f2"><div class="lab">Fuel vs food <span class="pill" style="background:var(--yellow)">Ukraine 2022</span></div><div><div class="num">4–5×</div><div class="sub">bigger monthly price swings for fuel than normal</div></div></a>
+      <a class="card kpi" href="#f3"><div class="lab">The delay <span class="pill" style="background:#FFE4D6;color:#B7410A">2022 → 2023</span></div><div><div class="num">10 mo</div><div class="sub">after diesel peaked, food peaked</div></div></a>
+      <a class="card kpi" href="#f5"><div class="lab">Fresh food <span class="pill" style="background:var(--bg)">since 2016</span></div><div><div class="num">2.4×</div><div class="sub">bigger rise than long-lasting groceries</div></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- DATA -->
+<section class="slide" id="data">
+  <div class="wrap">
+    <p class="eyebrow"><span class="dot"></span>Where the numbers come from</p>
+    <h2>Official monthly data from the Central Statistics Office</h2>
+    <div class="grid srcgrid">
+      <div class="card white srcbig">
+        <div class="srctop"><span class="pill" style="background:var(--yellow)">CSO table CPM24</span><span class="small">Index, Dec 2023 = 100</span></div>
+        <h3>Fuel &amp; food price index</h3>
+        <p>Petrol, diesel, and food &amp; non-alcoholic drinks.</p>
+        <div class="srcstat"><div class="num">129</div><div><b>months</b><br><span class="small">Jan 2016 – Sep 2026</span></div></div>
+        <a class="srclink" href="https://data.cso.ie/table/CPM24">data.cso.ie/table/CPM24 →</a>
+      </div>
+      <div class="card white srcbig">
+        <div class="srctop"><span class="pill" style="background:#D9F1E3;color:#14724A">CSO table CPM12</span><span class="small">Average price in €</span></div>
+        <h3>Prices of 14 everyday groceries</h3>
+        <p>Bread, milk, butter, eggs, meat, tea, sugar, pasta and more.</p>
+        <div class="srcstat"><div class="num">14</div><div><b>items</b><br><span class="small">Jan 2016 – Oct 2026</span></div></div>
+        <a class="srclink" href="https://data.cso.ie/table/CPM12">data.cso.ie/table/CPM12 →</a>
+      </div>
+    </div>
+    <div class="gloss-strip">
+      <div><b>Price index</b> A scale, not euro. 120 = 20% higher than December 2023.</div>
+      <div><b>Year-on-year</b> Compared with the same month a year earlier.</div>
+      <div><b>Correlation (r)</b> 1 = move together · 0 = no link · negative = opposite.</div>
+    </div>
+  </div>
+</section>
+
+<!-- F1 -->
+<section class="slide" id="f1">
+  <div class="wrap">
+    <div class="finding-head">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>01 · The big picture</p>
+        <h2>Fuel prices spiked twice. Food rose slowly, and stayed high.</h2>
+        <p class="lede">Fuel jumped in 2022 and again in 2026, then fell back. Food climbed from 2022 and has not come down.</p>
+      </div>
+      <div class="keystat"><div class="num">+28.5%</div><div class="small">food since its Jan 2021 low</div></div>
+    </div>
+    <div class="card chart-card">
+      <div class="chart-top">
+        <div class="legend"><span><i style="background:var(--blue)"></i>Petrol</span><span><i style="background:var(--orange)"></i>Diesel</span><span><i style="background:var(--green)"></i>Food</span><span><i style="background:var(--yellow);height:10px;width:14px"></i>Major event</span></div>
+        <label class="toggle"><input type="checkbox" id="t-bands" checked> Show events</label>
+      </div>
+      <div class="chart" id="c-big"></div>
+      <div class="src-line">Price index (December 2023 = 100). Source: CSO, CPM24.</div>
+    </div>
+  </div>
+</section>
+
+<!-- F2 -->
+<section class="slide" id="f2">
+  <div class="wrap">
+    <div class="finding-head">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>02 · Major events</p>
+        <h2>Fuel prices swing hard. Food prices barely move.</h2>
+        <p class="lede">During the Ukraine invasion, petrol moved 7.6% and diesel 6.8% in a typical month. Food moved just 1.1%.</p>
+      </div>
+      <div class="keystat"><div class="num">4–5×</div><div class="small">fuel swings vs normal months</div></div>
+    </div>
+    <div class="card chart-card">
+      <div class="chart-top">
+        <div class="legend"><span><i style="background:var(--blue)"></i>Petrol</span><span><i style="background:var(--orange)"></i>Diesel</span><span><i style="background:var(--green)"></i>Food</span></div>
+      </div>
+      <div class="chart" id="c-periods"></div>
+      <div class="src-line">Average size of the monthly price change. “×” = compared with normal months. Hormuz has only 2 months of data. Source: CSO, CPM24.</div>
+    </div>
+  </div>
+</section>
+
+<!-- F3 -->
+<section class="slide" id="f3">
+  <div class="wrap">
+    <div class="finding-head">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>03 · The delay</p>
+        <h2>Food price rises peaked 10 months after diesel's</h2>
+        <p class="lede">Diesel rose fastest in June 2022 (+50.8% on a year earlier). Food rose fastest in April 2023 (+13.1%). Drag the slider to line them up.</p>
+      </div>
+      <div class="keystat"><div class="num">10 mo</div><div class="small">Jun 2022 → Apr 2023</div></div>
+    </div>
+    <div class="card chart-card">
+      <div class="slider-row">
+        <div><div class="small">Move diesel forward by</div><div class="val" id="shiftVal">0 months</div></div>
+        <input type="range" id="shift" min="0" max="18" step="1" value="0" aria-label="Months to shift the diesel line forward">
+        <button class="btn ghost" type="button" id="snap10">Jump to 10</button>
+      </div>
+      <div class="readout" id="readout"></div>
+      <div class="chart" id="c-delay"></div>
+      <div class="src-line">Change compared with the same month a year earlier. Each panel has its own scale. Source: CSO, CPM24.</div>
+    </div>
+  </div>
+</section>
+
+<!-- F4 -->
+<section class="slide" id="f4">
+  <div class="wrap">
+    <div class="finding-head">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>04 · How reliable is the delay?</p>
+        <h2>The 9–12 month link is real, but it comes mostly from 2021–23</h2>
+        <p class="lede">Food lines up best with diesel from 10 months earlier. Take out the 2021–23 surge and the link disappears, so it is not a rule that always holds.</p>
+      </div>
+      <div class="keystat"><div class="num">0.61</div><div class="small">strongest link, at 10 months</div></div>
+    </div>
+    <div class="card chart-card">
+      <div class="chart-top">
+        <div class="legend"><span><i style="background:var(--orange)"></i>Diesel</span><span><i style="background:var(--blue)"></i>Petrol</span><span style="color:#8C8C8C"><i class="dash" style="background:#8C8C8C"></i>Diesel without 2021–2023</span></div>
+      </div>
+      <div class="chart" id="c-lag"></div>
+      <div class="src-line">How closely food price changes follow fuel price changes from x months earlier (1 = move together, 0 = no link).</div>
+    </div>
+    <div class="grid contrast">
+      <div class="card hl"><div><div class="small">All months</div><div style="font-size:17px;margin-top:4px">A clear link at 10 months</div></div><div class="num">0.61</div></div>
+      <div class="card"><div><div class="small">Without 2021–2023</div><div style="font-size:17px;margin-top:4px">The link disappears</div></div><div class="num">≈ −0.4</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- F5 -->
+<section class="slide" id="f5">
+  <div class="wrap">
+    <div class="finding-head">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>05 · Which groceries</p>
+        <h2>Fresh food rose more than twice as much as long-lasting food</h2>
+        <p class="lede">Perishable items rose 34.6% since 2016; shelf-stable items 14.6%. Both started climbing in 2022, after the fuel spike.</p>
+      </div>
+      <div class="keystat"><div class="num">2.4×</div><div class="small">+34.6% vs +14.6%</div></div>
+    </div>
+    <div class="two" style="margin-top:28px">
+      <div class="card chart-card" style="margin-top:0">
+        <div class="chart-top"><h3>Two groups over time</h3>
+          <div class="legend"><span><i style="background:var(--green)"></i>Perishable</span><span style="color:#4E9A6A"><i class="dash" style="background:#4E9A6A"></i>Shelf-stable</span></div></div>
+        <div class="chart" id="c-groups"></div>
+        <div class="src-line">Average of 7 items per group, January 2016 = 100. Source: CSO, CPM12.</div>
+      </div>
+      <div class="card chart-card" style="margin-top:0">
+        <div class="chart-top"><h3>Each item, 2016 → 2026</h3>
+          <div class="legend"><span><i style="background:var(--green);height:10px;width:10px"></i>Perishable</span><span><i style="background:#BFE6CD;height:10px;width:10px"></i>Shelf-stable</span></div></div>
+        <div class="chart" id="c-items"></div>
+        <div class="src-line">Price change, Jan 2016 → Sep 2026. Hover for prices in euro.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEANING -->
+<section class="slide" id="meaning">
+  <div class="wrap">
+    <p class="eyebrow"><span class="dot"></span>What it means for you</p>
+    <h2>After a big fuel shock, expect food prices to feel it for months</h2>
+    <div class="grid sgrid">
+      <div class="card"><div class="ic" style="background:var(--yellow)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E2E2E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></div><div><h3>Households</h3><p>Plan the food budget for the months after a fuel spike, not only at the pump.</p></div></div>
+      <div class="card"><div class="ic" style="background:#FFE4D6"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E2E2E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13v10H3z"/><path d="M16 10h3l2 3v4h-5"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg></div><div><h3>Businesses</h3><p>Shops, hauliers and farmers can plan prices and stock ahead.</p></div></div>
+      <div class="card"><div class="ic" style="background:#DCEBFD"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E2E2E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21V10M19 21V10M9 21V10M15 21V10M3 10l9-6 9 6"/></svg></div><div><h3>Policymakers</h3><p>Time support, like the 2026 fuel tax cuts, before food costs build up.</p></div></div>
+      <div class="card"><div class="ic" style="background:#D9F1E3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E2E2E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5"/></svg></div><div><h3>Journalists</h3><p>Explain rising grocery bills with evidence, without blaming fuel alone.</p></div></div>
+    </div>
+    <div class="card dark watch">
+      <div><div class="small">Diesel, March 2026</div><div class="num">+18.1%</div></div>
+      <div><h3 style="font-weight:400">Still to watch: the 2026 fuel spike</h3><p class="small" style="margin:8px 0 0;font-size:15px;color:#cfcfcf">Food prices haven't risen yet (data to September 2026). It is too early to tell whether they will follow this time.</p></div>
+    </div>
+    <div class="keep">
+      <div class="keep-h">Keep in mind</div>
+      <ul>
+        <li><b>Linked, not proven cause.</b> Wages, energy and packaging costs rose too.</li>
+        <li><b>The delay comes mostly from 2021–23.</b> It may not repeat.</li>
+        <li><b>National averages.</b> Your shop or region may differ.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="card">
+      <div><div class="small">Team</div><div style="font-size:20px;font-weight:400">Ahlam Khalil · Chenrui Xie · Sara Larkem</div><div class="small" style="margin-top:4px">Data Visualisation 4 · Lecturer: Yuhang Ye</div></div>
+      <div class="small">Data: Central Statistics Office Ireland (CPM24, CPM12)</div>
+      <a class="btn" style="background:var(--orange)" href="https://github.com/SaraLarkem/ireland-fuel-grocery-viz">Full analysis on GitHub →</a>
+    </div>
+  </div>
+</footer>
+
+<div class="pbar" id="pbar"><span id="pcount">1 / 1</span><button type="button" id="pprev" aria-label="Previous section">←</button><button type="button" id="pnext" aria-label="Next section">→</button><button type="button" id="pexit" aria-label="Exit presentation" style="width:auto;padding:0 10px">Exit</button></div>
+
+<script>
+const D = {"series":[["2016-01",72.8,65.0,90.7,null,null,null,100.0,100.0],["2016-02",70.5,61.1,90.0,null,null,null,98.89,100.62],["2016-03",70.0,61.9,90.3,null,null,null,97.55,101.16],["2016-04",73.1,64.2,90.0,null,null,null,98.53,100.65],["2016-05",74.7,65.3,90.0,null,null,null,98.71,100.04],["2016-06",77.0,67.9,89.9,null,null,null,98.56,99.33],["2016-07",76.1,67.3,89.5,null,null,null,97.74,100.17],["2016-08",74.0,65.9,89.6,null,null,null,97.9,100.64],["2016-09",74.4,67.3,89.2,null,null,null,97.91,100.51],["2016-10",75.4,68.8,88.8,null,null,null,98.01,97.52],["2016-11",75.8,69.8,88.4,null,null,null,98.48,98.19],["2016-12",76.9,71.0,88.1,null,null,null,97.63,98.7],["2017-01",79.3,73.4,88.4,8.93,12.92,-2.54,98.7,100.08],["2017-02",79.9,73.5,87.6,13.33,20.29,-2.67,97.76,99.12],["2017-03",80.0,73.4,87.9,14.29,18.58,-2.66,99.06,99.28],["2017-04",79.7,73.0,87.6,9.03,13.71,-2.67,99.19,98.98],["2017-05",79.1,72.2,88.0,5.89,10.57,-2.22,99.7,98.81],["2017-06",78.0,70.7,87.5,1.3,4.12,-2.67,98.35,96.77],["2017-07",76.7,69.3,87.7,0.79,2.97,-2.01,98.34,98.25],["2017-08",76.7,69.4,88.0,3.65,5.31,-1.79,99.78,97.81],["2017-09",78.6,70.9,87.3,5.65,5.35,-2.13,100.24,96.55],["2017-10",78.5,71.5,87.7,4.11,3.92,-1.24,99.84,98.02],["2017-11",80.2,73.4,87.3,5.8,5.16,-1.24,100.06,96.51],["2017-12",80.1,73.5,86.8,4.16,3.52,-1.48,100.05,95.37],["2018-01",80.0,73.7,86.9,0.88,0.41,-1.7,100.33,95.98],["2018-02",80.0,73.7,86.0,0.13,0.27,-1.83,100.19,94.45],["2018-03",79.4,73.1,86.3,-0.75,-0.41,-1.82,98.47,95.81],["2018-04",80.2,73.7,85.8,0.63,0.96,-2.05,99.16,95.35],["2018-05",82.3,76.0,86.0,4.05,5.26,-2.27,99.0,97.76],["2018-06",85.5,79.4,85.6,9.62,12.31,-2.17,98.65,95.91],["2018-07",85.4,79.2,85.9,11.34,14.29,-2.05,99.18,98.03],["2018-08",85.3,78.8,85.8,11.21,13.54,-2.5,100.35,96.3],["2018-09",85.8,79.3,85.5,9.16,11.85,-2.06,99.99,96.95],["2018-10",87.0,81.6,85.8,10.83,14.13,-2.17,98.87,95.18],["2018-11",86.4,81.6,85.6,7.73,11.17,-1.95,99.93,93.02],["2018-12",83.2,79.3,85.5,3.87,7.89,-1.5,99.86,93.2],["2019-01",78.1,74.6,85.6,-2.38,1.22,-1.5,100.2,94.73],["2019-02",78.2,75.4,85.4,-2.25,2.31,-0.7,99.91,92.78],["2019-03",79.6,77.1,85.7,0.25,5.47,-0.7,99.8,94.03],["2019-04",82.6,78.6,85.7,2.99,6.65,-0.12,99.82,93.28],["2019-05",85.9,79.8,85.9,4.37,5.0,-0.12,100.69,94.15],["2019-06",85.6,79.3,85.5,0.12,-0.13,-0.12,99.38,93.82],["2019-07",83.3,76.7,85.4,-2.46,-3.16,-0.58,99.86,94.56],["2019-08",83.5,77.1,85.5,-2.11,-2.16,-0.35,101.47,93.14],["2019-09",83.5,77.1,84.7,-2.68,-2.77,-0.94,101.94,89.05],["2019-10",84.5,78.5,84.8,-2.87,-3.8,-1.17,102.03,92.39],["2019-11",83.9,78.1,84.7,-2.89,-4.29,-1.05,101.34,91.45],["2019-12",84.5,78.7,84.7,1.56,-0.76,-0.94,102.16,90.25],["2020-01",85.9,80.4,84.6,9.99,7.77,-1.17,101.79,92.31],["2020-02",84.9,79.1,84.6,8.57,4.91,-0.94,101.73,91.03],["2020-03",83.1,77.1,84.4,4.4,0.0,-1.52,101.95,91.55],["2020-04",78.8,73.5,84.6,-4.6,-6.49,-1.28,101.51,91.31],["2020-05",77.5,71.9,84.7,-9.78,-9.9,-1.4,101.42,90.07],["2020-06",78.3,72.2,84.2,-8.53,-8.95,-1.52,101.11,90.87],["2020-07",79.9,73.6,84.4,-4.08,-4.04,-1.17,101.04,89.95],["2020-08",80.3,73.8,84.0,-3.83,-4.28,-1.75,100.91,89.6],["2020-09",79.8,73.1,83.5,-4.43,-5.19,-1.42,100.49,89.31],["2020-10",79.6,72.5,83.5,-5.8,-7.64,-1.53,100.95,88.64],["2020-11",79.7,72.8,83.5,-5.01,-6.79,-1.42,100.8,88.94],["2020-12",75.0,68.8,83.4,-11.24,-12.58,-1.53,100.64,88.24],["2021-01",76.9,70.7,82.8,-10.48,-12.06,-2.13,100.43,88.4],["2021-02",78.7,72.9,82.9,-7.3,-7.84,-2.01,100.87,88.78],["2021-03",83.5,77.6,83.7,0.48,0.65,-0.83,100.82,89.59],["2021-04",85.4,78.7,84.0,8.38,7.07,-0.71,101.33,89.03],["2021-05",86.3,79.5,83.9,11.35,10.57,-0.94,100.69,89.24],["2021-06",87.3,80.9,84.0,11.49,12.05,-0.24,100.6,89.38],["2021-07",89.8,83.3,84.4,12.39,13.18,0.0,100.6,89.41],["2021-08",90.4,83.5,84.1,12.58,13.14,0.12,100.89,89.94],["2021-09",91.4,84.4,83.9,14.54,15.46,0.48,101.04,88.75],["2021-10",96.8,90.8,84.2,21.61,25.24,0.84,101.73,89.77],["2021-11",100.4,94.1,84.3,25.97,29.26,0.96,101.37,90.71],["2021-12",98.9,93.5,84.7,31.87,35.9,1.56,102.7,90.62],["2022-01",99.5,93.4,84.7,29.39,32.11,2.29,102.18,91.84],["2022-02",102.6,96.6,85.4,30.37,32.51,3.02,104.43,93.44],["2022-03",113.0,113.4,86.2,35.33,46.13,2.99,105.8,94.73],["2022-04",105.8,110.2,86.9,23.89,40.03,3.45,107.38,95.52],["2022-05",108.7,112.5,87.5,25.96,41.51,4.29,109.41,95.23],["2022-06",125.5,122.0,89.6,43.76,50.8,6.67,111.71,97.24],["2022-07",121.7,120.7,90.9,35.52,44.9,7.7,114.14,98.66],["2022-08",111.6,112.3,91.5,23.45,34.49,8.8,115.25,99.31],["2022-09",105.2,111.9,92.1,15.1,32.58,9.77,116.04,100.01],["2022-10",105.0,113.6,93.1,8.47,25.11,10.57,118.1,100.5],["2022-11",105.9,117.3,93.7,5.48,24.65,11.15,120.35,102.3],["2022-12",93.2,100.6,94.7,-5.76,7.59,11.81,121.45,104.85],["2023-01",93.2,99.3,95.4,-6.33,6.32,12.63,122.03,104.63],["2023-02",95.5,98.6,96.6,-6.92,2.07,13.11,122.55,107.36],["2023-03",95.4,95.8,97.5,-15.58,-15.52,13.11,123.66,108.77],["2023-04",95.4,92.1,98.3,-9.83,-16.42,13.12,124.57,110.2],["2023-05",92.8,86.7,98.6,-14.63,-22.93,12.69,123.44,110.97],["2023-06",95.4,88.4,98.7,-23.98,-27.54,10.16,123.08,110.7],["2023-07",95.8,89.7,98.9,-21.28,-25.68,8.8,123.32,110.93],["2023-08",99.7,95.6,99.0,-10.66,-14.87,8.2,122.92,111.05],["2023-09",106.8,105.5,99.3,1.52,-5.72,7.82,122.68,111.79],["2023-10",108.1,108.4,99.6,2.95,-4.58,6.98,123.09,111.78],["2023-11",105.0,104.9,100.0,-0.85,-10.57,6.72,122.83,113.92],["2023-12",100.0,100.0,100.0,7.3,-0.6,5.6,122.94,114.04],["2024-01",98.5,98.5,99.8,5.69,-0.81,4.61,123.08,114.27],["2024-02",100.2,100.5,100.5,4.92,1.93,4.04,122.73,112.88],["2024-03",101.3,101.3,100.4,6.18,5.74,2.97,122.05,113.21],["2024-04",105.5,103.6,101.0,10.59,12.49,2.75,123.68,114.24],["2024-05",106.3,101.9,101.2,14.55,17.53,2.64,122.94,114.61],["2024-06",104.3,99.7,101.0,9.33,12.78,2.33,122.8,114.29],["2024-07",104.2,100.4,101.0,8.77,11.93,2.12,122.81,114.85],["2024-08",103.9,99.4,101.0,4.21,3.97,2.02,123.84,113.86],["2024-09",101.3,96.8,101.2,-5.15,-8.25,1.91,124.91,114.08],["2024-10",99.3,95.4,101.7,-8.14,-11.99,2.11,125.98,114.25],["2024-11",101.2,97.8,101.9,-3.62,-6.77,1.9,127.15,113.62],["2024-12",102.4,99.8,102.0,2.4,-0.2,2.0,127.73,114.05],["2025-01",104.2,102.2,102.4,5.79,3.76,2.61,127.45,114.7],["2025-02",105.8,104.2,103.0,5.59,3.68,2.49,128.65,113.59],["2025-03",104.1,102.6,103.7,2.76,1.28,3.29,130.06,113.38],["2025-04",102.1,100.1,104.4,-3.22,-3.38,3.37,132.14,113.04],["2025-05",99.3,96.7,105.2,-6.59,-5.1,3.95,134.74,114.51],["2025-06",99.1,96.2,105.6,-4.99,-3.51,4.55,135.9,114.14],["2025-07",100.7,99.2,105.7,-3.36,-1.2,4.65,136.57,114.7],["2025-08",100.4,99.0,106.2,-3.37,-0.4,5.15,137.12,114.19],["2025-09",100.4,98.4,106.0,-0.89,1.65,4.74,136.97,114.96],["2025-10",101.9,99.6,106.3,2.62,4.4,4.52,137.26,113.37],["2025-11",103.0,101.7,106.3,1.78,3.99,4.32,137.57,114.23],["2025-12",102.7,102.1,106.2,0.29,2.3,4.12,137.12,114.34],["2026-01",101.4,100.4,106.4,-2.69,-1.76,3.91,136.1,114.02],["2026-02",102.1,101.2,106.4,-3.5,-2.88,3.3,135.78,113.82],["2026-03",110.0,119.5,106.1,5.67,16.47,2.31,135.45,113.86],["2026-04",111.5,126.2,106.5,9.21,26.07,2.01,134.68,113.88],["2026-05",109.3,116.0,106.6,10.07,19.96,1.33,135.42,114.87],["2026-06",108.1,109.6,106.2,9.08,13.93,0.57,134.75,113.88],["2026-07",103.7,102.6,106.4,2.98,3.43,0.66,134.47,114.1],["2026-08",109.3,113.9,106.3,8.86,15.05,0.09,134.52,115.28],["2026-09",114.5,120.0,106.4,14.04,21.95,0.38,134.62,114.62]],"periods":[{"name":"Normal","n":85,"avg_Petrol":1.51,"sd_Petrol":2.05,"max_Petrol":6.13,"avg_Diesel":1.73,"sd_Diesel":2.2,"max_Diesel":6.0,"avg_Food":0.31,"sd_Food":0.4,"max_Food":1.04},{"name":"COVID-19 lockdowns","n":4,"avg_Petrol":2.49,"sd_Petrol":2.54,"max_Petrol":5.17,"avg_Diesel":2.45,"sd_Diesel":2.09,"max_Diesel":4.67,"avg_Food":0.3,"sd_Food":0.37,"max_Food":0.59},{"name":"Post-COVID supply issues","n":12,"avg_Petrol":2.6,"sd_Petrol":2.16,"max_Petrol":6.1,"avg_Diesel":2.72,"sd_Diesel":2.41,"max_Diesel":7.58,"avg_Food":0.37,"sd_Food":0.45,"max_Food":0.97},{"name":"Ukraine invasion","n":5,"avg_Petrol":7.56,"sd_Petrol":8.27,"max_Petrol":15.46,"avg_Diesel":6.83,"sd_Diesel":7.67,"max_Diesel":17.39,"avg_Food":1.13,"sd_Food":0.71,"max_Food":2.4},{"name":"ECB rate hikes","n":15,"avg_Petrol":3.32,"sd_Petrol":4.86,"max_Petrol":11.99,"avg_Diesel":4.15,"sd_Diesel":5.8,"max_Diesel":14.24,"avg_Food":0.69,"sd_Food":0.42,"max_Food":1.45},{"name":"Strait of Hormuz disruption","n":2,"avg_Petrol":4.55,"sd_Petrol":4.51,"max_Petrol":7.74,"avg_Diesel":11.84,"sd_Diesel":8.82,"max_Diesel":18.08,"avg_Food":0.33,"sd_Food":0.47,"max_Food":0.38},{"name":"Post-Hormuz aftermath","n":5,"avg_Petrol":3.46,"sd_Petrol":4.23,"max_Petrol":5.4,"avg_Diesel":7.27,"sd_Diesel":8.43,"max_Diesel":11.01,"avg_Food":0.17,"sd_Food":0.22,"max_Food":0.38}],"lags":[{"lag":0,"d":-0.019,"p":-0.111,"dw":-0.109},{"lag":1,"d":0.06,"p":-0.046,"dw":-0.165},{"lag":2,"d":0.139,"p":0.021,"dw":-0.23},{"lag":3,"d":0.22,"p":0.096,"dw":-0.26},{"lag":4,"d":0.297,"p":0.176,"dw":-0.279},{"lag":5,"d":0.373,"p":0.259,"dw":-0.313},{"lag":6,"d":0.454,"p":0.346,"dw":-0.358},{"lag":7,"d":0.518,"p":0.425,"dw":-0.398},{"lag":8,"d":0.565,"p":0.489,"dw":-0.413},{"lag":9,"d":0.597,"p":0.537,"dw":-0.416},{"lag":10,"d":0.614,"p":0.569,"dw":-0.409},{"lag":11,"d":0.613,"p":0.582,"dw":-0.366},{"lag":12,"d":0.602,"p":0.586,"dw":-0.309},{"lag":13,"d":0.581,"p":0.585,"dw":-0.275},{"lag":14,"d":0.549,"p":0.575,"dw":-0.215},{"lag":15,"d":0.503,"p":0.546,"dw":-0.169},{"lag":16,"d":0.447,"p":0.5,"dw":-0.124},{"lag":17,"d":0.383,"p":0.444,"dw":-0.09},{"lag":18,"d":0.309,"p":0.374,"dw":-0.053}],"items":[{"item":"Butter per lb","p0":2.73,"p1":4.24,"chg":55.4,"grp":"Perishable"},{"item":"White granulated sugar per 1 kg","p0":1.28,"p1":1.83,"chg":43.3,"grp":"Shelf-stable"},{"item":"Full fat milk per 2 litre","p0":1.71,"p1":2.37,"chg":38.5,"grp":"Perishable"},{"item":"Sirloin steak per kg","p0":16.28,"p1":22.05,"chg":35.4,"grp":"Perishable"},{"item":"Spaghetti per 500g","p0":1.1,"p1":1.49,"chg":35.3,"grp":"Shelf-stable"},{"item":"Large eggs per half dozen","p0":1.85,"p1":2.47,"chg":33.6,"grp":"Perishable"},{"item":"Bread, white sliced pan, large (800g)","p0":1.26,"p1":1.67,"chg":32.4,"grp":"Perishable"},{"item":"Tomatoes per kg","p0":2.98,"p1":3.68,"chg":23.7,"grp":"Perishable"},{"item":"Uncooked chicken medium size 1.6kg","p0":4.94,"p1":6.09,"chg":23.3,"grp":"Perishable"},{"item":"Tea bags per 80","p0":2.72,"p1":3.33,"chg":22.4,"grp":"Shelf-stable"},{"item":"White, self raising flour per 2 kg","p0":2.38,"p1":2.56,"chg":7.9,"grp":"Shelf-stable"},{"item":"Marmalade per lb","p0":1.92,"p1":2.06,"chg":7.4,"grp":"Shelf-stable"},{"item":"Brown, wholemeal flour per 2 kg","p0":3.03,"p1":3.24,"chg":6.9,"grp":"Shelf-stable"},{"item":"Jam per lb","p0":1.38,"p1":1.09,"chg":-20.9,"grp":"Shelf-stable"}],"events":{"COVID-19 lockdowns":["2020-03","2020-06"],"Post-COVID supply issues":["2021-01","2021-12"],"Ukraine invasion":["2022-02","2022-06"],"ECB rate hikes":["2022-07","2023-09"],"Strait of Hormuz disruption":["2026-03","2026-04"],"Post-Hormuz aftermath":["2026-05","2026-09"]}};
+const $ = s => document.querySelector(s);
+const P = d3.utcParse('%Y-%m');
+const S = D.series.map(r => ({d:P(r[0]), petrol:r[1], diesel:r[2], food:r[3], py:r[4], dy:r[5], fy:r[6], per:r[7], shelf:r[8]}));
+const EV = Object.entries(D.events).map(([name,[a,b]]) => ({name, a:P(a), b:d3.utcMonth.offset(P(b),1)}));
+const SHORT = {'COVID-19 lockdowns':'COVID','Post-COVID supply issues':'Supply issues','Ukraine invasion':'Ukraine','ECB rate hikes':'ECB hikes','Strait of Hormuz disruption':'Hormuz','Post-Hormuz aftermath':'After'};
+const C = {petrol:'#53A2F7', diesel:'#FE5E0E', food:'#1E9E63', per:'#1E9E63', shelf:'#4E9A6A', shelfFill:'#BFE6CD', grey:'#8C8C8C', ink:'#2E2E2E', muted:'#8A8A8A', band:'#FAF5B2', grid:'#E6E6E6'};
+const NAME = {petrol:'Petrol', diesel:'Diesel', food:'Food'};
+const fmtM = d3.utcFormat('%b %Y');
+const f1 = d3.format('.1f'), sgn = d3.format('+.1f');
+const last = S[S.length-1];
+
+function tipFor(el){
+  const t = document.createElement('div'); t.className='tip'; el.appendChild(t);
+  return {
+    show(html, x, y){ t.innerHTML = html; t.style.opacity = 1; const w = t.offsetWidth, W = el.clientWidth;
+      let L = x + 16; if (L + w > W) L = x - w - 16; t.style.left = Math.max(0, L) + 'px'; t.style.top = Math.max(0, y - 20) + 'px'; },
+    hide(){ t.style.opacity = 0; }
+  };
+}
+function base(el, H){ el.innerHTML=''; const W = el.clientWidth; const svg = d3.select(el).append('svg').attr('width', W).attr('height', H); return {svg, W}; }
+function sw(c){ return `<span class="sw" style="background:${c}"></span>`; }
+function eventAt(d){ const e = EV.find(e => d >= e.a && d < e.b); return e ? e.name : null; }
+function dodge(items, gap, lo, hi){ // items: {y} -> adjusts y to avoid overlap
+  items.sort((a,b)=>a.y-b.y);
+  for (let i=1;i<items.length;i++) if (items[i].y - items[i-1].y < gap) items[i].y = items[i-1].y + gap;
+  const over = items.length ? items[items.length-1].y - hi : 0; if (over > 0) items.forEach(it => it.y -= over);
+  return items;
+}
+function bands(svg, x, top, bottom, labels, small){
+  const g = svg.append('g');
+  g.selectAll('rect').data(EV).join('rect').attr('x', d=>x(d.a)).attr('width', d=>Math.max(1, Math.min(x(d.b), x.range()[1])-x(d.a))).attr('y', top).attr('height', bottom-top).attr('fill', C.band).attr('opacity', .9);
+  if (labels && !small) g.selectAll('text').data(EV).join('text').attr('class','band-lab').attr('x', d=>(x(d.a)+Math.min(x(d.b), x.range()[1]))/2).attr('y', (d,i)=> top - 6 - (i%2)*13).attr('text-anchor','middle').text(d=>SHORT[d.name]);
+}
+
+/* ---------- hero sparkline ---------- */
+function drawSpark(){
+  const el = $('#c-spark'); const H = 110; const {svg, W} = base(el, H); const m = {t:8, r:4, b:18, l:4};
+  const x = d3.scaleUtc(d3.extent(S, d=>d.d), [m.l, W-m.r]); const y = d3.scaleLinear([55,130], [H-m.b, m.t]);
+  bands(svg, x, m.t, H-m.b, false);
+  ['petrol','diesel','food'].forEach(k => svg.append('path').datum(S).attr('fill','none').attr('stroke', C[k]).attr('stroke-width', k==='food'?2.4:1.8).attr('d', d3.line().x(d=>x(d.d)).y(d=>y(d[k])).curve(d3.curveMonotoneX)));
+  svg.append('text').attr('class','note').attr('x', m.l).attr('y', H-2).text('2016');
+  svg.append('text').attr('class','note').attr('x', W-m.r).attr('y', H-2).attr('text-anchor','end').text('Sep 2026');
+}
+
+/* ---------- F1 big picture ---------- */
+function drawBig(){
+  const el = $('#c-big'); const Wc = el.clientWidth, small = Wc < 640; const H = small ? 320 : 440;
+  const m = {t:40, r:small?58:78, b:30, l:38}; const {svg, W} = base(el, H);
+  const x = d3.scaleUtc(d3.extent(S, d=>d.d), [m.l, W-m.r]); const y = d3.scaleLinear([50,135], [H-m.b, m.t]);
+  if ($('#t-bands').checked) bands(svg, x, m.t, H-m.b, true, small);
+  svg.append('g').attr('class','ax').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(W-m.l-m.r)).tickPadding(8)).call(g=>g.selectAll('line').attr('stroke-opacity',.9));
+  svg.append('g').attr('class','ax').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).ticks(small?d3.utcYear.every(2):d3.utcYear.every(1)).tickSize(0).tickPadding(10));
+  svg.append('line').attr('x1',m.l).attr('x2',W-m.r).attr('y1',y(100)).attr('y2',y(100)).attr('stroke','#9a9a9a').attr('stroke-dasharray','3 4');
+  if (!small) svg.append('text').attr('class','note').attr('x', m.l+6).attr('y', y(100)-6).text('Dec 2023 = 100');
+  const keys = ['petrol','diesel','food'];
+  keys.forEach(k => svg.append('path').datum(S).attr('fill','none').attr('stroke', C[k]).attr('stroke-width', k==='food'?3.2:2.4).attr('stroke-linejoin','round').attr('d', d3.line().x(d=>x(d.d)).y(d=>y(d[k]))));
+  const labs = dodge(keys.map(k => ({k, y:y(last[k])})), 16, m.t, H-m.b);
+  labs.forEach(l => svg.append('text').attr('class','lab').attr('x', x(last.d)+8).attr('y', l.y).attr('dy','.35em').attr('fill', C[l.k]).text(NAME[l.k]));
+  // peaks
+  const pk = [{k:'petrol', d:P('2022-06'), v:125.5, t:'Petrol 125.5', dx:-8, anchor:'end'}, {k:'diesel', d:P('2026-04'), v:126.2, t:'Diesel 126.2', dx:-8, anchor:'end'}];
+  pk.forEach(p => { svg.append('circle').attr('cx', x(p.d)).attr('cy', y(p.v)).attr('r', 5).attr('fill', '#fff').attr('stroke', C[p.k]).attr('stroke-width', 2.5);
+    if (!small) svg.append('text').attr('class','note').attr('x', x(p.d)+p.dx).attr('y', y(p.v)-4).attr('text-anchor', p.anchor).style('font-weight',500).attr('fill', C[p.k]).text(p.t); });
+  // hover
+  const tip = tipFor(el); const vl = svg.append('line').attr('y1', m.t).attr('y2', H-m.b).attr('stroke', C.ink).attr('stroke-opacity', .25).style('display','none');
+  const dots = keys.map(k => svg.append('circle').attr('r', 4).attr('fill', C[k]).attr('stroke','#fff').attr('stroke-width',1.5).style('display','none'));
+  const bis = d3.bisector(d=>d.d).center;
+  svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W-m.l-m.r).attr('height', H-m.t-m.b).attr('fill','transparent')
+    .on('pointermove', ev => { const [mx,my] = d3.pointer(ev); const d = S[bis(S, x.invert(mx))]; const X = x(d.d);
+      vl.attr('x1', X).attr('x2', X).style('display', null); keys.forEach((k,i) => dots[i].attr('cx', X).attr('cy', y(d[k])).style('display', null));
+      const e = eventAt(d.d);
+      tip.show(`<b>${fmtM(d.d)}</b>${e?`<div class="ev">${e}</div>`:''}` + keys.map(k => `<div>${sw(C[k])}${NAME[k]} ${f1(d[k])}</div>`).join(''), X, my); })
+    .on('pointerleave', () => { tip.hide(); vl.style('display','none'); dots.forEach(d=>d.style('display','none')); });
+}
+
+/* ---------- F2 periods ---------- */
+const metric = 'avg';
+function drawPeriods(){
+  const el = $('#c-periods'); const Wc = el.clientWidth, small = Wc < 640;
+  const PER = D.periods, keys = ['Petrol','Diesel','Food'], ck = {Petrol:C.petrol, Diesel:C.diesel, Food:C.food};
+  const bh = small?12:15, gapb = 3, rowH = 3*bh + 2*gapb + (small?22:24);
+  const m = {t:6, r:small?84:110, b:28, l:small?112:214}; const H = m.t + PER.length*rowH + m.b;
+  const {svg, W} = base(el, H);
+  const max = d3.max(PER, p => d3.max(keys, k => p[`${metric}_${k}`]));
+  const x = d3.scaleLinear([0, max], [m.l, W-m.r]).nice();
+  svg.append('g').attr('class','ax').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).ticks(small?3:6).tickFormat(d=>d+'%').tickSize(-(H-m.b-m.t)).tickPadding(8));
+  const normal = PER[0];
+  const tip = tipFor(el);
+  PER.forEach((p,i) => {
+    const y0 = m.t + i*rowH; const g = svg.append('g');
+    if (i===0) g.append('rect').attr('x', 0).attr('y', y0+2).attr('width', W).attr('height', rowH-8).attr('fill', '#F2F2F2').attr('rx', 10);
+    const nm = small ? SHORT[p.name] || p.name : (p.name==='Normal' ? 'Normal (no event)' : p.name);
+    const tx = g.append('text').attr('x', 12).attr('y', y0 + rowH/2 - 6).attr('class','lab').attr('fill', C.ink).style('font-weight', 400).style('font-size', small?'12px':'14px');
+    tx.append('tspan').text(small && p.name==='Normal' ? 'Normal' : nm);
+    tx.append('tspan').attr('x', 12).attr('dy', 17).attr('fill', p.n<=2 ? '#B7410A' : C.muted).style('font-size','12px').text(`${p.n} months${p.n<=2 && !small ? ' · very little data' : ''}`);
+    keys.forEach((k,j) => {
+      const v = p[`${metric}_${k}`], by = y0 + 10 + j*(bh+gapb);
+      g.append('rect').attr('x', m.l).attr('y', by).attr('height', bh).attr('width', Math.max(1, x(v)-m.l)).attr('fill', ck[k]).attr('rx', 3)
+        .on('pointermove', ev => { const [mx,my] = d3.pointer(ev, el); tip.show(`<b>${p.name}</b><div>${sw(ck[k])}${k}: ${f1(v)}%</div>${i? `<div>${f1(v/normal[`${metric}_${k}`])}× the Normal value</div>`:''}<div style="color:#bbb">${p.n} months</div>`, mx, my); })
+        .on('pointerleave', () => tip.hide());
+      const ratio = i ? v / normal[`${metric}_${k}`] : null;
+      const t = g.append('text').attr('x', x(v)+6).attr('y', by + bh/2).attr('dy','.35em').attr('class','note').style('font-size', small?'11px':'12px');
+      t.append('tspan').attr('fill', C.ink).text(f1(v)+'%');
+      if (ratio !== null && !small && k !== 'Food') t.append('tspan').attr('fill', ratio >= 2 ? '#B7410A' : C.muted).text(`  ${f1(ratio)}×`);
+    });
+  });
+}
+
+/* ---------- F3 delay ---------- */
+let shift = 0;
+const DP = P('2022-06'), FP = P('2023-04');
+function drawDelay(){
+  const el = $('#c-delay'); const Wc = el.clientWidth, small = Wc < 640;
+  const ph = small ? 150 : 185, gap = 46; const m = {t:26, r:small?14:26, b:30, l:46};
+  const H = m.t + ph + gap + ph + m.b; const {svg, W} = base(el, H);
+  const Y = S.filter(d => d.dy !== null && d.fy !== null);
+  const x = d3.scaleUtc([Y[0].d, last.d], [m.l, W-m.r]);
+  const t1 = m.t, b1 = m.t + ph, t2 = b1 + gap, b2 = t2 + ph;
+  const yD = d3.scaleLinear(d3.extent(Y, d=>d.dy), [b1, t1]).nice();
+  const yF = d3.scaleLinear(d3.extent(Y, d=>d.fy), [b2, t2]).nice();
+  const clipId = 'clipD';
+  svg.append('clipPath').attr('id', clipId).append('rect').attr('x', m.l).attr('y', t1-10).attr('width', W-m.l-m.r).attr('height', ph+20);
+  [[yD,t1,b1,'Diesel price inflation',C.diesel],[yF,t2,b2,'Food price inflation',C.food]].forEach(([yy,t,b,title,c]) => {
+    svg.append('g').attr('class','ax').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(4).tickFormat(d=>d+'%').tickSize(-(W-m.l-m.r)).tickPadding(6));
+    svg.append('line').attr('x1', m.l).attr('x2', W-m.r).attr('y1', yy(0)).attr('y2', yy(0)).attr('stroke','#9a9a9a');
+    svg.append('text').attr('class','lab').attr('x', m.l).attr('y', t-10).attr('fill', c).text(title);
+  });
+  svg.append('g').attr('class','ax').attr('transform',`translate(0,${b2})`).call(d3.axisBottom(x).ticks(small?d3.utcYear.every(2):d3.utcYear.every(1)).tickSize(0).tickPadding(10));
+  // ghost (shifted diesel)
+  if (shift > 0) svg.append('path').datum(Y).attr('clip-path',`url(#${clipId})`).attr('fill','none').attr('stroke', C.diesel).attr('stroke-opacity', .45).attr('stroke-width', 2).attr('stroke-dasharray','5 4')
+      .attr('d', d3.line().x(d=>x(d3.utcMonth.offset(d.d, shift))).y(d=>yD(d.dy)));
+  svg.append('path').datum(Y).attr('fill','none').attr('stroke', C.diesel).attr('stroke-width', 2.6).attr('d', d3.line().x(d=>x(d.d)).y(d=>yD(d.dy)));
+  svg.append('path').datum(Y).attr('fill','none').attr('stroke', C.food).attr('stroke-width', 3).attr('d', d3.line().x(d=>x(d.d)).y(d=>yF(d.fy)));
+  // food peak guide
+  const xf = x(FP), xs = x(d3.utcMonth.offset(DP, shift)), aligned = shift === 10;
+  svg.append('line').attr('x1', xf).attr('x2', xf).attr('y1', t1).attr('y2', b2).attr('stroke', C.food).attr('stroke-opacity', .35).attr('stroke-dasharray','2 4');
+  svg.append('line').attr('x1', xs).attr('x2', xs).attr('y1', t1).attr('y2', b2).attr('stroke', C.diesel).attr('stroke-width', aligned?2.5:1.5).attr('stroke-dasharray', aligned?null:'4 4');
+  // peak markers
+  svg.append('circle').attr('cx', x(DP)).attr('cy', yD(50.8)).attr('r', 6).attr('fill','#fff').attr('stroke', C.diesel).attr('stroke-width', 2.5);
+  svg.append('text').attr('class','note').attr('x', x(DP)-10).attr('y', yD(50.8)+4).attr('text-anchor','end').style('font-weight',500).attr('fill', C.diesel).text('+50.8% · Jun 2022');
+  svg.append('circle').attr('cx', xf).attr('cy', yF(13.1)).attr('r', aligned?9:6).attr('fill', aligned?C.food:'#fff').attr('stroke', C.food).attr('stroke-width', 2.5);
+  svg.append('text').attr('class','note').attr('x', xf+12).attr('y', yF(13.1)+4).style('font-weight',500).attr('fill', C.food).text('+13.1% · Apr 2023');
+  // bracket in the gap
+  const gy = b1 + gap/2 + 4;
+  svg.append('line').attr('x1', x(DP)).attr('x2', xf).attr('y1', gy).attr('y2', gy).attr('stroke', C.ink).attr('stroke-width', 1.5);
+  [x(DP), xf].forEach(X => svg.append('line').attr('x1', X).attr('x2', X).attr('y1', gy-5).attr('y2', gy+5).attr('stroke', C.ink).attr('stroke-width',1.5));
+  svg.append('text').attr('class','lab').attr('x', (x(DP)+xf)/2).attr('y', gy-8).attr('text-anchor','middle').attr('fill', C.ink).text('10 months');
+  // hover
+  const tip = tipFor(el); const bis = d3.bisector(d=>d.d).center;
+  const vl = svg.append('line').attr('y1', t1).attr('y2', b2).attr('stroke', C.ink).attr('stroke-opacity', .2).style('display','none');
+  svg.append('rect').attr('x', m.l).attr('y', t1).attr('width', W-m.l-m.r).attr('height', b2-t1).attr('fill','transparent')
+    .on('pointermove', ev => { const [mx,my] = d3.pointer(ev); const d = Y[bis(Y, x.invert(mx))]; vl.attr('x1', x(d.d)).attr('x2', x(d.d)).style('display', null);
+      tip.show(`<b>${fmtM(d.d)}</b><div>${sw(C.diesel)}Diesel ${sgn(d.dy)}%</div><div>${sw(C.food)}Food ${sgn(d.fy)}%</div>`, x(d.d), my); })
+    .on('pointerleave', () => { tip.hide(); vl.style('display','none'); });
+  // readout
+  $('#shiftVal').textContent = `${shift} month${shift===1?'':'s'}`;
+  $('#readout').innerHTML = `Diesel's peak now sits at <b>${fmtM(d3.utcMonth.offset(DP, shift))}</b>.` + (aligned ? '<span class="ok">Lines up with the food peak</span>' : (shift < 10 ? ' Keep going →' : ' Too far, go back ←'));
+}
+
+/* ---------- F4 lag ---------- */
+function drawLag(){
+  const el = $('#c-lag'); const Wc = el.clientWidth, small = Wc < 640; const H = small ? 300 : 400;
+  const m = {t:30, r:small?96:150, b:44, l:46}; const {svg, W} = base(el, H);
+  const L = D.lags; const x = d3.scaleLinear([0,18], [m.l, W-m.r]); const y = d3.scaleLinear([-0.6, 0.9], [H-m.b, m.t]);
+  svg.append('rect').attr('x', x(9)).attr('width', x(12)-x(9)).attr('y', m.t).attr('height', H-m.t-m.b).attr('fill', C.band);
+  svg.append('text').attr('class','band-lab').attr('x', (x(9)+x(12))/2).attr('y', m.t-8).attr('text-anchor','middle').style('font-weight',500).style('font-size','12px').text('9–12 months');
+  svg.append('g').attr('class','ax').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(W-m.l-m.r)).tickPadding(8));
+  svg.append('g').attr('class','ax').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).ticks(small?6:18).tickSize(0).tickPadding(10));
+  svg.append('text').attr('class','note').attr('x', (m.l+W-m.r)/2).attr('y', H-6).attr('text-anchor','middle').text('Months by which fuel price changes lead food price changes');
+  svg.append('line').attr('x1', m.l).attr('x2', W-m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', C.ink).attr('stroke-opacity', .6);
+  const series = [{k:'d', c:C.diesel, n:'Diesel'}, {k:'p', c:C.petrol, n:'Petrol'}, {k:'dw', c:C.grey, n:'Diesel without 2021–23', dash:'6 5'}];
+  series.forEach(s => {
+    svg.append('path').datum(L).attr('fill','none').attr('stroke', s.c).attr('stroke-width', 2.6).attr('stroke-dasharray', s.dash||null).attr('d', d3.line().x(d=>x(d.lag)).y(d=>y(d[s.k])));
+    svg.append('g').selectAll('circle').data(L).join('circle').attr('cx', d=>x(d.lag)).attr('cy', d=>y(d[s.k])).attr('r', 3.2).attr('fill', s.c);
+  });
+  const labs = dodge(series.map(s => ({s, y:y(L[18][s.k])})), 18, m.t, H-m.b);
+  labs.forEach(l => { const t = svg.append('text').attr('class','lab').attr('x', x(18)+10).attr('y', l.y).attr('dy','.35em').attr('fill', l.s.c);
+    if (l.s.k==='dw') { t.append('tspan').text('Diesel without'); t.append('tspan').attr('x', x(18)+10).attr('dy', 15).text('2021–2023'); } else t.text(l.s.n); });
+  const b = L[10];
+  svg.append('circle').attr('cx', x(10)).attr('cy', y(b.d)).attr('r', 8).attr('fill','none').attr('stroke', C.diesel).attr('stroke-width', 2);
+  svg.append('text').attr('class','lab').attr('x', x(10)-12).attr('y', y(b.d)-24).attr('text-anchor','end').attr('fill', C.ink).text(`Strongest: 10 months (r = ${b.d.toFixed(2)})`);
+  const tip = tipFor(el); const vl = svg.append('line').attr('y1', m.t).attr('y2', H-m.b).attr('stroke', C.ink).attr('stroke-opacity', .2).style('display','none');
+  svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W-m.l-m.r).attr('height', H-m.t-m.b).attr('fill','transparent')
+    .on('pointermove', ev => { const [mx,my] = d3.pointer(ev); const d = L[Math.max(0, Math.min(18, Math.round(x.invert(mx))))]; vl.attr('x1', x(d.lag)).attr('x2', x(d.lag)).style('display', null);
+      tip.show(`<b>Fuel leads food by ${d.lag} month${d.lag===1?'':'s'}</b>` + series.map(s => `<div>${sw(s.c)}${s.n}: r = ${d[s.k].toFixed(2)}</div>`).join(''), x(d.lag), my); })
+    .on('pointerleave', () => { tip.hide(); vl.style('display','none'); });
+}
+
+/* ---------- F5 groups + items ---------- */
+function drawGroups(){
+  const el = $('#c-groups'); const Wc = el.clientWidth, small = Wc < 520; const H = small ? 280 : 340;
+  const m = {t:28, r:small?78:96, b:30, l:38}; const {svg, W} = base(el, H);
+  const x = d3.scaleUtc(d3.extent(S, d=>d.d), [m.l, W-m.r]); const y = d3.scaleLinear([80,150], [H-m.b, m.t]);
+  bands(svg, x, m.t, H-m.b, false);
+  svg.append('g').attr('class','ax').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(W-m.l-m.r)).tickPadding(8));
+  svg.append('g').attr('class','ax').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).ticks(d3.utcYear.every(2)).tickSize(0).tickPadding(10));
+  svg.append('line').attr('x1', m.l).attr('x2', W-m.r).attr('y1', y(100)).attr('y2', y(100)).attr('stroke', C.ink).attr('stroke-opacity', .5);
+  const G = [{k:'per', c:C.per, n:'Perishable', w:3.2}, {k:'shelf', c:C.shelf, n:'Shelf-stable', w:2.8, dash:'7 5'}];
+  G.forEach(g => svg.append('path').datum(S).attr('fill','none').attr('stroke', g.c).attr('stroke-width', g.w).attr('stroke-dasharray', g.dash||null).attr('d', d3.line().x(d=>x(d.d)).y(d=>y(d[g.k]))));
+  const labs = dodge(G.map(g => ({g, y:y(last[g.k])})), 34, m.t, H-m.b);
+  labs.forEach(l => { const t = svg.append('text').attr('class','lab').attr('x', x(last.d)+8).attr('y', l.y).attr('fill', l.g.c);
+    t.append('tspan').attr('dy','-.15em').text(l.g.n); t.append('tspan').attr('x', x(last.d)+8).attr('dy','1.2em').style('font-size','18px').style('font-weight',400).text(sgn(last[l.g.k]-100)+'%'); });
+  const tip = tipFor(el); const bis = d3.bisector(d=>d.d).center;
+  const vl = svg.append('line').attr('y1', m.t).attr('y2', H-m.b).attr('stroke', C.ink).attr('stroke-opacity', .2).style('display','none');
+  svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W-m.l-m.r).attr('height', H-m.t-m.b).attr('fill','transparent')
+    .on('pointermove', ev => { const [mx,my] = d3.pointer(ev); const d = S[bis(S, x.invert(mx))]; vl.attr('x1', x(d.d)).attr('x2', x(d.d)).style('display', null);
+      tip.show(`<b>${fmtM(d.d)}</b><div>${sw(C.per)}Perishable ${f1(d.per)}</div><div>${sw(C.shelf)}Shelf-stable ${f1(d.shelf)}</div>`, x(d.d), my); })
+    .on('pointerleave', () => { tip.hide(); vl.style('display','none'); });
+}
+const ITEM = {'Butter per lb':'Butter (lb)','White granulated sugar per 1 kg':'Sugar (1 kg)','Full fat milk per 2 litre':'Milk (2 L)','Sirloin steak per kg':'Sirloin steak (kg)','Spaghetti per 500g':'Spaghetti (500 g)','Large eggs per half dozen':'Eggs (6)','Bread, white sliced pan, large (800g)':'White bread (800 g)','Tomatoes per kg':'Tomatoes (kg)','Uncooked chicken medium size 1.6kg':'Chicken (1.6 kg)','Tea bags per 80':'Tea bags (80)','White, self raising flour per 2 kg':'Self-raising flour (2 kg)','Marmalade per lb':'Marmalade (lb)','Brown, wholemeal flour per 2 kg':'Wholemeal flour (2 kg)','Jam per lb':'Jam (lb)'};
+function drawItems(){
+  const el = $('#c-items'); const Wc = el.clientWidth, small = Wc < 520; const rh = small ? 20 : 22;
+  const m = {t:6, r:52, b:24, l:small?132:160}; const H = m.t + D.items.length*rh + m.b; const {svg, W} = base(el, H);
+  const x = d3.scaleLinear([-25, 60], [m.l, W-m.r]);
+  svg.append('g').attr('class','ax').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).ticks(small?4:6).tickFormat(d=>d+'%').tickSize(-(H-m.b-m.t)).tickPadding(6));
+  svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', m.t).attr('y2', H-m.b).attr('stroke', C.ink).attr('stroke-opacity', .6);
+  const tip = tipFor(el);
+  D.items.forEach((it,i) => {
+    const yy = m.t + i*rh; const per = it.grp === 'Perishable';
+    svg.append('text').attr('x', m.l-8).attr('y', yy + rh/2).attr('dy','.35em').attr('text-anchor','end').attr('class','note').style('font-size', small?'11px':'12.5px').attr('fill', C.ink).text(ITEM[it.item]||it.item);
+    svg.append('rect').attr('x', Math.min(x(0), x(it.chg))).attr('width', Math.abs(x(it.chg)-x(0))).attr('y', yy+4).attr('height', rh-8).attr('rx', 3).attr('fill', per ? C.per : C.shelfFill)
+      .on('pointermove', ev => { const [mx,my] = d3.pointer(ev, el); tip.show(`<b>${it.item}</b><div>${it.grp}</div><div>€${it.p0.toFixed(2)} → €${it.p1.toFixed(2)}</div><div>${sgn(it.chg)}%</div>`, mx, my); })
+      .on('pointerleave', () => tip.hide());
+    svg.append('text').attr('x', it.chg >= 0 ? x(it.chg)+5 : x(0)+5).attr('y', yy + rh/2).attr('dy','.35em').attr('text-anchor','start').attr('class','note').style('font-size','11.5px').text(sgn(it.chg)+'%');
+  });
+}
+
+/* ---------- wiring ---------- */
+function drawAll(){ drawSpark(); drawBig(); drawPeriods(); drawDelay(); drawLag(); drawGroups(); drawItems(); }
+$('#t-bands').addEventListener('change', drawBig);
+$('#shift').addEventListener('input', e => { shift = +e.target.value; drawDelay(); });
+$('#snap10').addEventListener('click', () => { shift = 10; $('#shift').value = 10; drawDelay(); });
+let rt; let lastW = window.innerWidth;
+window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (window.innerWidth !== lastW) { lastW = window.innerWidth; drawAll(); } }, 150); });
+
+/* nav highlight */
+const secs = [...document.querySelectorAll('section.slide')];
+const navLinks = [...document.querySelectorAll('#nav a')];
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) {
+  let id = e.target.id; if (/^f\d$/.test(id)) id = 'f1';
+  navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#'+id));
+  const i = secs.indexOf(e.target); $('#pcount').textContent = `${i+1} / ${secs.length}`; } }), {rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s => io.observe(s));
+
+/* presentation mode */
+function cur(){ const mid = window.innerHeight * 0.4; let idx = 0; secs.forEach((s,i) => { if (s.getBoundingClientRect().top - 70 <= mid) idx = i; }); return idx; }
+function go(d){ const i = Math.max(0, Math.min(secs.length-1, cur()+d)); secs[i].scrollIntoView({behavior:'smooth', block:'start'}); }
+function setPresent(on){ document.body.classList.toggle('present', on);
+  try { if (on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); else if (!on && document.fullscreenElement) document.exitFullscreen().catch(()=>{}); } catch(e){}
+  setTimeout(() => { drawAll(); }, 120); }
+$('#presentBtn').addEventListener('click', () => setPresent(!document.body.classList.contains('present')));
+$('#pexit').addEventListener('click', () => setPresent(false));
+$('#pprev').addEventListener('click', () => go(-1));
+$('#pnext').addEventListener('click', () => go(1));
+document.addEventListener('keydown', e => {
+  if (!document.body.classList.contains('present')) return;
+  if (e.target && e.target.tagName === 'INPUT') return;
+  if (['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)) { e.preventDefault(); go(1); }
+  else if (['ArrowLeft','ArrowUp','PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
+  else if (e.key === 'Escape') setPresent(false);
+});
+
+drawAll();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+</script>
+</body>
+</html>
