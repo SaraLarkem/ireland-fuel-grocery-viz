@@ -4,6 +4,10 @@
 
 Many Irish households have felt prices rise sharply in recent years, and fuel and food prices are often talked about together. This project uses official data from the Central Statistics Office (CSO) to look at how petrol and diesel prices are linked to food prices in Ireland from January 2016 to September 2026. We compare long-term trends, look at whether food prices tend to follow fuel prices after a delay, check how prices moved during major events (COVID-19, the Ukraine invasion, the ECB rate hikes and the 2026 Strait of Hormuz disruption), and compare fresh (perishable) and long-lasting (shelf-stable) groceries. The results show how the prices are linked and move together over time; they are not proof that one price changes the other.
 
+**Live website:** https://saralarkem.github.io/ireland-fuel-grocery-viz/web/
+
+An interactive one-page version of the findings, built with D3.js. It has charts you can hover over, a slider that lines up the diesel and food peaks, and a Present button for full-screen presenting.
+
 ## Team
 
 | | |
@@ -36,6 +40,7 @@ Both datasets are monthly and have no missing values. The grocery item data runs
 | `notebooks/` | Jupyter notebooks for data cleaning, analysis and the final charts (run in order 01 → 06) |
 | `images/` | Charts saved by the notebooks (the presentation charts start with `final_`) |
 | `docs/` | Project documents: topic pitch, proposal, team charter and stakeholder, audience and data audit |
+| `web/` | The interactive website (`index.html`), published with GitHub Pages |
 
 ## Notebooks
 
